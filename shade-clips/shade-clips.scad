@@ -10,14 +10,16 @@
 // the velcro and reuse the screws to attach these clips in their place. The
 // design includes two clips, a long one for the outside screws and a short one
 // for the inside. You will need to print two copies of this design to make
-// clips for all four screws.
+// clips for all four screws. A heat-resistant filament is recommended; the
+// author knows from experience, for example, that PLA will soften due to heat
+// under sunny conditions.
 
 ////////////////////////////////////////////////////////////////////////////////
 // You can adjust some parameters here.
 
 // The thickness of the clip in millimeters. This should be less than
 // PILLAR_HEIGHT.
-THICKNESS = 4;
+THICKNESS = 3.5;
 
 // The width of each clip in millimeters.
 WIDTH = 22;
