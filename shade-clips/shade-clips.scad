@@ -48,13 +48,13 @@ PILLAR_RADIUS = 6;
 PILLAR_HEIGHT = 6;
 
 // Some text that should be engraved into the clips.
-TEXT_STRING = "EKKO";
+TEXT_STRING = "Stekko Parts";
 
 // Font for the engraved text. 
 TEXT_FONT = "Liberation Sans:style=Bold";
 
 // Size for the engraved text.
-TEXT_SIZE = 6.0;
+TEXT_SIZE = 4.8;
 
 // Depth of the text engraving, in millimeters.
 TEXT_DEPTH = 0.4;

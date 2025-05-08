@@ -1,6 +1,6 @@
 # Stekko Parts
 
-This is an open source archive of a few custom motorhome parts used by Daniel Azuma for his Winnebago Ekko. They are designed for a 2024 model year Ekko 22A, but may also be useful on similar units.
+This is an open source archive of a few custom motorhome parts used by Daniel Azuma for his Winnebago Ekko. They are designed for a 2024 model year Ekko 22A (i.e. the Ford Transit model), but may also be useful on similar units.
 
 ## FAQ
 
