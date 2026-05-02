@@ -1,10 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Bathroom window fan mount for a Transit EKKO
-// Copyright 2025 Daniel Azuma
+// Copyright 2025-2026 Daniel Azuma
 ////////////////////////////////////////////////////////////////////////////////
 
 // This is a design for a two-piece system to mount an exhaust fan in the Ekko's
-// bathroom window.
+// bathroom window. It is known to be compatible with the 2024 Transit Ekko, and
+// will probably work for some other models, but earlier models might have an
+// older shade cassette design that does not include the clip for the upper
+// panel.
+//
 // The top piece clips to the bottom of the window screen above. The bottom
 // piece slots into the top of the blackout screen below, and mounts a fan.
 // The dimensions match this one: https://www.amazon.com/dp/B0DD3TZ5XX but you
@@ -14,28 +18,19 @@
 // holes are sized for M4 bolts; you will need four 20mm (or longer) bolts and
 // five 16mm (or longer) bolts, along with appropriate nuts and washers.
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Instantiation
 
-// Uncomment this line to visualize a demo of all the pieces together.
-// Note that you probably can't print the entire thing all at once since it's
-// too large for most printers. For printable renders, use one of the other
-// options below.
-test_arrangement();
-
-// Uncomment this line to render the lower left panel and clips for printing.
-//lower_left_with_clips();
-
-// Uncomment this line to render the lower right panel for printing.
-//lower_right();
-
-// Uncomment this line to render the upper left panel for printing.
-//upper_left();
-
-// Uncomment this line to render the upper right panel for printing.
-//upper_right();
-
+// Select the target to render. Possible values are:
+// * "test-arrangement" -- a demo of all pieces together.
+//   Note that you probably can't print the entire thing all at once since it's
+//   too large for most printers. For printable renders, use another option.
+// * "lower-left" -- the lower left panel only
+// * "lower-right" -- the lower right panel only
+// * "upper-left" -- the upper left panel only
+// * "upper-right" -- the upper right panel only
+// * "clips" -- the clips only
+TARGET = "test-arrangement";
 
 ////////////////////////////////////////////////////////////////////////////////
 // Parameters dealing with the text engraved into the bracket.
@@ -44,7 +39,7 @@ test_arrangement();
 // Some text that should be engraved into the bracket.
 TEXT_STRING = "Stekko Parts";
 
-// Font for the engraved text. 
+// Font for the engraved text.
 TEXT_FONT = "Liberation Sans:style=Bold";
 
 // Size for the engraved text.
@@ -523,4 +518,39 @@ module test_arrangement() {
         lower_right();
     translate([OBJECT_SPACING, - LOWER_HEIGHT - OBJECT_SPACING, 0])
         lower_left_with_clips();
+}
+
+module clips_only() {
+  translate([OBJECT_SPACING, OBJECT_SPACING, 0])
+    clip();
+  translate([OBJECT_SPACING, OBJECT_SPACING * 3 + SLOT_HEIGHT + CLIP_CONNECTOR_HEIGHT, 0])
+    clip();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Instantiation
+
+if (TARGET == "test-arrangement") {
+  test_arrangement();
+}
+else if (TARGET == "lower-left-with-clips") {
+  lower_left_with_clips();
+}
+else if (TARGET == "lower-left") {
+  lower_left();
+}
+else if (TARGET == "lower-right") {
+  lower_right();
+}
+else if (TARGET == "upper-left") {
+  upper_left();
+}
+else if (TARGET == "upper-right") {
+  upper_right();
+}
+else if (TARGET == "clips") {
+  clips_only();
+}
+else {
+  echo("ERROR: Unknown TARGET value: ", TARGET);
 }

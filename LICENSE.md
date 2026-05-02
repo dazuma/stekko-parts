@@ -1,4 +1,4 @@
-Copyright 2025 Daniel Azuma
+Copyright 2025-2026 Daniel Azuma
 
 Permission is granted to use this software, either as-is or modified, to fabricate parts for your own use, or for third parties, with or without charge.
 

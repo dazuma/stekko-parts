@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Shade clips for Vanmade Shades windshield shade on a Transit EKKO
-// Copyright 2025 Daniel Azuma
+// Copyright 2025-2026 Daniel Azuma
 ////////////////////////////////////////////////////////////////////////////////
 
 // This is a design for a set of clips to hold a Vanmade Gear windshield shade
@@ -19,7 +19,7 @@
 
 // The thickness of the clip in millimeters. This should be less than
 // PILLAR_HEIGHT.
-THICKNESS = 3.5;
+THICKNESS = 4.0;
 
 // The width of each clip in millimeters.
 WIDTH = 22;
@@ -45,12 +45,15 @@ SCREW_RADIUS = 2;
 PILLAR_RADIUS = 6;
 
 // The height of the screwed-in pillar. Must be greater than THICKNESS.
-PILLAR_HEIGHT = 6;
+PILLAR_HEIGHT = 6.5;
+
+// The height of the backing washer.
+BACKING_HEIGHT = 6;
 
 // Some text that should be engraved into the clips.
 TEXT_STRING = "Stekko Parts";
 
-// Font for the engraved text. 
+// Font for the engraved text.
 TEXT_FONT = "Liberation Sans:style=Bold";
 
 // Size for the engraved text.
@@ -77,6 +80,11 @@ CIRCLE_SIDES = 60;
 // A small spacing, in millimeters, to ensure that the clip spins freely around
 // the size of the pillar.
 EPSILON = 0.1;
+
+// Which target to render.
+// Possible values include: "clip-long", "clip-short", "pillar", "backing", and
+// "shade-clips".
+TARGET = "shade-clips";
 
 // End of the parameters
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +129,26 @@ module pillar() {
         }
 }
 
-translate([EDGE_SPACING, EDGE_SPACING, 0]) {
+module backing() {
+    translate([WIDTH/2, WIDTH/2, BACKING_HEIGHT/2])
+        difference() {
+            union() {
+                cube([WIDTH, WIDTH-CORNER_RADIUS*2, BACKING_HEIGHT], true);
+                cube([WIDTH-CORNER_RADIUS*2, WIDTH, BACKING_HEIGHT], true);
+                translate([WIDTH/2-CORNER_RADIUS, WIDTH/2-CORNER_RADIUS, 0])
+                    cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
+                translate([-WIDTH/2+CORNER_RADIUS, WIDTH/2-CORNER_RADIUS, 0])
+                    cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
+                translate([WIDTH/2-CORNER_RADIUS, -WIDTH/2+CORNER_RADIUS, 0])
+                    cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
+                translate([-WIDTH/2+CORNER_RADIUS, -WIDTH/2+CORNER_RADIUS, 0])
+                    cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
+            }
+            cylinder(BACKING_HEIGHT+EPSILON, SCREW_RADIUS, SCREW_RADIUS, true, $fn=CIRCLE_SIDES);
+        }
+}
+
+module collection() {
     object_offset = WIDTH+OBJECT_SPACING;
     clip(LENGTH_SHORTER-WIDTH/2);
     translate([object_offset, 0, 0])
@@ -130,4 +157,29 @@ translate([EDGE_SPACING, EDGE_SPACING, 0]) {
         pillar();
     translate([object_offset*2, object_offset, 0])
         pillar();
+    translate([object_offset*2, object_offset*2, 0])
+        backing();
+    translate([object_offset*2, object_offset*3, 0])
+        backing();
+}
+
+translate([EDGE_SPACING, EDGE_SPACING, 0]) {
+    if (TARGET == "shade-clips") {
+        collection();
+    }
+    else if (TARGET == "clip-long") {
+        clip(LENGTH_LONGER-WIDTH/2);
+    }
+    else if (TARGET == "clip-short") {
+        clip(LENGTH_SHORTER-WIDTH/2);
+    }
+    else if (TARGET == "pillar") {
+        pillar();
+    }
+    else if (TARGET == "backing") {
+        backing();
+    }
+    else {
+        echo("ERROR: Unknown TARGET value: ", TARGET);
+    }
 }
