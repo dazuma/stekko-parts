@@ -17,6 +17,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 // You can adjust some parameters here.
 
+// Which target to render.
+// Possible values include: "clip-long", "clip-short", "pillar", "backing", and
+// "shade-clips".
+TARGET = "shade-clips";
+
 // The thickness of the clip in millimeters. This should be less than
 // PILLAR_HEIGHT.
 THICKNESS = 4.0;
@@ -45,10 +50,21 @@ SCREW_RADIUS = 2;
 PILLAR_RADIUS = 6;
 
 // The height of the screwed-in pillar. Must be greater than THICKNESS.
-PILLAR_HEIGHT = 6.5;
+PILLAR_HEIGHT = 7;
+
+// Radius difference between the pillar and the clip hole, allowing the clip
+// to spin more freely.
+PILLAR_SPACING = 0.3;
+
+// Vertical spacing between the pillar cap and the clip, allowing the clip
+// to spin more freely.
+CAP_SPACING = 0.8;
 
 // The height of the backing washer.
 BACKING_HEIGHT = 6;
+
+// The width of the backing washer
+BACKING_WIDTH = 18;
 
 // Some text that should be engraved into the clips.
 TEXT_STRING = "Stekko Parts";
@@ -57,7 +73,7 @@ TEXT_STRING = "Stekko Parts";
 TEXT_FONT = "Liberation Sans:style=Bold";
 
 // Size for the engraved text.
-TEXT_SIZE = 4.8;
+TEXT_SIZE = 4.5;
 
 // Depth of the text engraving, in millimeters.
 TEXT_DEPTH = 0.4;
@@ -77,14 +93,8 @@ EDGE_SPACING = 1;
 // means smoother but more complex and slower rendering.
 CIRCLE_SIDES = 60;
 
-// A small spacing, in millimeters, to ensure that the clip spins freely around
-// the size of the pillar.
+// A small spacing, in millimeters, to ensure unions overlap.
 EPSILON = 0.1;
-
-// Which target to render.
-// Possible values include: "clip-long", "clip-short", "pillar", "backing", and
-// "shade-clips".
-TARGET = "shade-clips";
 
 // End of the parameters
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +103,7 @@ TARGET = "shade-clips";
 // modify this unless you want to fix or alter the structure.
 
 module clip(length) {
-    hole_radius = PILLAR_RADIUS+EPSILON;
+    hole_radius = PILLAR_RADIUS+PILLAR_SPACING;
     translate([WIDTH/2, WIDTH/2, THICKNESS/2])
         difference() {
             union() {
@@ -115,7 +125,7 @@ module clip(length) {
 }
 
 module pillar() {
-    cap_height = PILLAR_HEIGHT-THICKNESS-EPSILON;
+    cap_height = PILLAR_HEIGHT-THICKNESS-CAP_SPACING;
     translate([WIDTH/2, WIDTH/2, 0])
         difference() {
             union() {
@@ -130,18 +140,18 @@ module pillar() {
 }
 
 module backing() {
-    translate([WIDTH/2, WIDTH/2, BACKING_HEIGHT/2])
+    translate([BACKING_WIDTH/2, BACKING_WIDTH/2, BACKING_HEIGHT/2])
         difference() {
             union() {
-                cube([WIDTH, WIDTH-CORNER_RADIUS*2, BACKING_HEIGHT], true);
-                cube([WIDTH-CORNER_RADIUS*2, WIDTH, BACKING_HEIGHT], true);
-                translate([WIDTH/2-CORNER_RADIUS, WIDTH/2-CORNER_RADIUS, 0])
+                cube([BACKING_WIDTH, BACKING_WIDTH-CORNER_RADIUS*2, BACKING_HEIGHT], true);
+                cube([BACKING_WIDTH-CORNER_RADIUS*2, BACKING_WIDTH, BACKING_HEIGHT], true);
+                translate([BACKING_WIDTH/2-CORNER_RADIUS, BACKING_WIDTH/2-CORNER_RADIUS, 0])
                     cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
-                translate([-WIDTH/2+CORNER_RADIUS, WIDTH/2-CORNER_RADIUS, 0])
+                translate([-BACKING_WIDTH/2+CORNER_RADIUS, BACKING_WIDTH/2-CORNER_RADIUS, 0])
                     cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
-                translate([WIDTH/2-CORNER_RADIUS, -WIDTH/2+CORNER_RADIUS, 0])
+                translate([BACKING_WIDTH/2-CORNER_RADIUS, -BACKING_WIDTH/2+CORNER_RADIUS, 0])
                     cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
-                translate([-WIDTH/2+CORNER_RADIUS, -WIDTH/2+CORNER_RADIUS, 0])
+                translate([-BACKING_WIDTH/2+CORNER_RADIUS, -BACKING_WIDTH/2+CORNER_RADIUS, 0])
                     cylinder(BACKING_HEIGHT, CORNER_RADIUS, CORNER_RADIUS, true, $fn=CIRCLE_SIDES);
             }
             cylinder(BACKING_HEIGHT+EPSILON, SCREW_RADIUS, SCREW_RADIUS, true, $fn=CIRCLE_SIDES);
