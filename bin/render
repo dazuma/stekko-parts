@@ -1,0 +1,147 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Render helper for OpenSCAD designs in this repo.
+#
+# Renders one or more .scad files to PNGs from multiple camera angles, and for
+# files that follow this repo's TARGET convention, renders each TARGET value
+# automatically. Output PNGs go to <repo>/tmp/render/ by default (gitignored).
+# This is a development aid for visual review of geometry changes; it is not
+# used by the design files themselves.
+#
+# Usage:
+#   bin/render path/to/design.scad
+#   bin/render path/to/design.scad --target clip-long --angle iso
+#   bin/render path/to/design.scad --angle all --size 1200,900
+
+require "fileutils"
+require "optparse"
+require "shellwords"
+
+# Camera rotations (rx, ry, rz) for each named angle. Translation and distance
+# are auto-computed via --viewall --autocenter, so only rotation matters here.
+ANGLES = {
+  "iso"   => [55, 0, 25],
+  "top"   => [0, 0, 0],
+  "front" => [90, 0, 0],
+  "side"  => [90, 0, 90],
+}.freeze
+
+# Anchor default output to the repo root (script lives in <repo>/bin/) so the
+# location doesn't depend on the caller's current working directory.
+DEFAULT_OUT = File.expand_path("../tmp/render", __dir__)
+DEFAULT_SIZE = "800,600"
+DEFAULT_COLORSCHEME = "Tomorrow"
+
+options = {
+  angles: ANGLES.keys,
+  targets: nil,
+  out: DEFAULT_OUT,
+  size: DEFAULT_SIZE,
+  colorscheme: DEFAULT_COLORSCHEME,
+  verbose: false,
+}
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: bin/render <file.scad> [options]"
+
+  opts.on("-t", "--target NAME", "Render only this TARGET (repeatable; default: all detected)") do |v|
+    options[:targets] ||= []
+    options[:targets] << v
+  end
+
+  opts.on("-a", "--angle NAME", ANGLES.keys + ["all"],
+          "One of: #{ANGLES.keys.join(", ")}, all (default: all)") do |v|
+    options[:angles] = (v == "all") ? ANGLES.keys : [v]
+  end
+
+  opts.on("-o", "--out DIR", "Output directory (default: #{DEFAULT_OUT})") do |v|
+    options[:out] = v
+  end
+
+  opts.on("-s", "--size WxH", "Image size as W,H (default: #{DEFAULT_SIZE})") do |v|
+    options[:size] = v
+  end
+
+  opts.on("-c", "--colorscheme NAME", "OpenSCAD colorscheme (default: #{DEFAULT_COLORSCHEME})") do |v|
+    options[:colorscheme] = v
+  end
+
+  opts.on("-v", "--verbose", "Print the openscad command being run") do
+    options[:verbose] = true
+  end
+
+  opts.on("-h", "--help") do
+    puts opts
+    exit
+  end
+end
+
+parser.parse!
+
+scad = ARGV.first
+unless scad && File.file?(scad)
+  warn parser.help
+  warn ""
+  warn "ERROR: must pass an existing .scad file path"
+  exit 1
+end
+
+# Detect TARGET values used in the file. Looks for "TARGET == \"...\"" branches
+# (the dispatch convention). Falls back to nil (render with whatever TARGET the
+# file's own default sets) if no branches are found.
+contents = File.read(scad)
+detected = contents.scan(/TARGET\s*==\s*"([^"]+)"/).flatten.uniq
+detected = [nil] if detected.empty?
+
+targets = options[:targets] || detected
+
+base = File.basename(scad, ".scad")
+FileUtils.mkdir_p(options[:out])
+
+failures = []
+
+targets.each do |target|
+  options[:angles].each do |angle|
+    rx, ry, rz = ANGLES.fetch(angle)
+    suffix = target ? "-#{target}-#{angle}" : "-#{angle}"
+    out_path = File.join(options[:out], "#{base}#{suffix}.png")
+
+    cmd = [
+      "openscad",
+      "-o", out_path,
+      "--imgsize=#{options[:size]}",
+      "--camera=0,0,0,#{rx},#{ry},#{rz},0",
+      "--viewall",
+      "--autocenter",
+      "--colorscheme=#{options[:colorscheme]}",
+    ]
+    cmd << "-D" << "TARGET=\"#{target}\"" if target
+    cmd << scad
+
+    label = File.basename(out_path)
+    print "Rendering #{label}... "
+    $stdout.flush
+    if options[:verbose]
+      puts
+      puts "  $ #{cmd.shelljoin}"
+    end
+    ok = system(*cmd, out: File::NULL, err: File::NULL)
+    if ok
+      puts "ok"
+    else
+      puts "FAILED"
+      failures << [label, cmd]
+    end
+  end
+end
+
+puts ""
+puts "Output: #{options[:out]}"
+
+if failures.any?
+  warn ""
+  warn "#{failures.length} render(s) failed:"
+  failures.each { |name, cmd| warn "  #{name}: #{cmd.shelljoin}" }
+  exit 1
+end
