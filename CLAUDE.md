@@ -36,20 +36,20 @@ Repo-wide cleanup:
 toys clean    # respects .gitignore; preserves .claude/plans and .claude/settings.local.json
 ```
 
-## Visual verification — `bin/render`
+## Visual verification — `toys render`
 
 Geometry changes are not verified by tests; they are verified by looking at the rendered model. Before declaring a geometry change done, render it and check the result.
 
 ```sh
-bin/render shade-clips/shade-clips.scad                  # all detected TARGETs, all 4 angles
-bin/render shade-clips/shade-clips.scad -t clip-long     # one target, all angles
-bin/render shade-clips/shade-clips.scad -a iso           # all targets, one angle
-bin/render shade-clips/shade-clips.scad -t pillar -a top # one specific render
+toys render shade-clips/shade-clips.scad                  # all detected TARGETs, all 4 angles
+toys render shade-clips/shade-clips.scad -t clip-long     # one target, all angles
+toys render shade-clips/shade-clips.scad -a iso           # all targets, one angle
+toys render shade-clips/shade-clips.scad -t pillar -a top # one specific render
 ```
 
-PNGs land in `tmp/render/` at the repo root (already covered by `.gitignore`'s `tmp/`). The script auto-detects `TARGET` values by parsing the `.scad` file, uses `--viewall --autocenter` so framing is automatic, and renders four standard angles (iso, top, front, side).
+PNGs land in `tmp/render/` at the repo root (gitignored). The tool auto-detects `TARGET` values by parsing the `.scad` file, uses `--viewall --autocenter` so framing is automatic, and renders four standard angles (iso, top, front, side). Run `toys render --help` for the full flag list.
 
-This script is a development aid for Claude (and humans) doing visual review — it is not part of the build pipeline and STLs do not depend on it. **If you find yourself wanting capabilities `bin/render` doesn't have (section views, side-by-side before/after diffing, per-module isolation, different camera presets, etc.), propose extending the script rather than working around it with one-off `openscad` invocations.** The script exists specifically so improvements accumulate in one place.
+This tool is a development aid for Claude (and humans) doing visual review — it is not part of the build pipeline and STLs do not depend on it. **If you find yourself wanting capabilities `toys render` doesn't have (section views, side-by-side before/after diffing, per-module isolation, different camera presets, etc.), propose extending the tool (`.toys/render.rb`) rather than working around it with one-off `openscad` invocations.** The tool exists specifically so improvements accumulate in one place.
 
 ## Working effectively on geometry
 
