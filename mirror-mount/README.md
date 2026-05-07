@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a design for mounting hardware for mounting a certain mirror on the EKKO bathroom door. It's quite specific to the particular mirror, and probably not useful otherwise.
+This is a design for mounting hardware for mounting a certain mirror on the EKKO bathroom door. It's quite specific to the particular mirror, and probably not useful otherwise. It assumes you are using 32mm long M5 bolts.
 
 ## Using the files
 
@@ -12,4 +12,4 @@ This is a design for mounting hardware for mounting a certain mirror on the EKKO
 
 ## Building
 
-You can build the files using OpenSCAD directly. Or, if you're a Ruby user, you can use the provided Toys file to run builds from the command line (e.g. `toys build --all`). See https://dazuma.github.io/toys for information on Toys.
+You can build the files using OpenSCAD directly. Or, if you're a Ruby user, you can use the provided Toys file to run builds from the command line (e.g. `toys build`). See https://dazuma.github.io/toys for information on Toys.

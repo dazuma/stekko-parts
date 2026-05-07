@@ -57,6 +57,8 @@ LOWER_MOUNT_THICKNESS = 9;
 // Thickness of the base of the lower mount bracket, supporting the nut
 LOWER_MOUNT_BASE_THICKNESS = 3;
 
+LOWER_MOUNT_CUTOUT_WIDTH = 13;
+
 // Radius of the bolt holes
 BOLT_RADIUS = 2.7;
 
@@ -184,6 +186,12 @@ module lower_mount() {
         cylinder(PEG_LENGTH+EPSILON, BOLT_RADIUS, BOLT_RADIUS, true, $fn=CIRCLE_SIDES);
       }
     }
+    translate([LOWER_MOUNT_CUTOUT_WIDTH/2-EPSILON/2, LOWER_MOUNT_HEIGHT/2, LOWER_MOUNT_THICKNESS/2+LOWER_MOUNT_BASE_THICKNESS]) {
+      cube([LOWER_MOUNT_CUTOUT_WIDTH+EPSILON, LOWER_MOUNT_HEIGHT+EPSILON, LOWER_MOUNT_THICKNESS], true);
+    }
+    translate([LOWER_MOUNT_WIDTH-LOWER_MOUNT_CUTOUT_WIDTH/2+EPSILON/2, LOWER_MOUNT_HEIGHT/2, LOWER_MOUNT_THICKNESS/2+LOWER_MOUNT_BASE_THICKNESS]) {
+      cube([LOWER_MOUNT_CUTOUT_WIDTH+EPSILON, LOWER_MOUNT_HEIGHT+EPSILON, LOWER_MOUNT_THICKNESS], true);
+    }
   }
 }
 
@@ -269,6 +277,19 @@ module test_collection() {
 }
 
 module all_collection() {
+  for (i = [0:2]) {
+    translate([0, i*(PANEL_HALF_HEIGHT*2+OBJECT_SPACING), 0]) outside_panel();
+  }
+  translate([OUTSIDE_PANEL_WIDTH+OBJECT_SPACING, 0, 0]) {
+    for (i = [0:2]) {
+      translate([0, i*(PANEL_HALF_HEIGHT+PANEL_LOWER_HEIGHT+OBJECT_SPACING), 0]) inside_panel();
+    }
+  }
+  translate([OUTSIDE_PANEL_WIDTH+INSIDE_PANEL_WIDTH+OBJECT_SPACING*2, 0, 0]) {
+    lower_mount();
+    translate([0, LOWER_MOUNT_HEIGHT+OBJECT_SPACING, 0]) nut_mount();
+    translate([0, LOWER_MOUNT_HEIGHT+MOUNT_HEIGHT+OBJECT_SPACING*2, 0]) nut_mount();
+  }
 }
 
 if (TARGET == "test-pieces") {

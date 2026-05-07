@@ -7,7 +7,10 @@ This is an open source archive of a few custom motorhome parts used by Daniel Az
 Each part is under a particular directory. Some are generally useful, while others may be pretty specific to my specific projects or modifications. I'm providing everything as-is with no warranty of fitness for any of your projects.
 
  *  `bathroom-fan-mount` - This is a mount for a bathroom exhaust fan that fits into the bathroom window shade construct. It might be useful if you are doing a similar project.
+
  *  `shade-clips` - These are clips that can hold a [Vanmade Gear windshield shade](https://vanmadegear.com/products/ekko-windshield-shade) in place without having to use the cab sun visors. On certain model years of the Transit EKKO, they reuse the screws that hold the little velcro "coins" that hold up the useless OEM cab curtain. They are probably usable for most Transit EKKOs if you have the Vanmade or similar windshield shade.
+
+ *  `mirror-mount` - This is some mounting hardware to better secure a particular mirror to our bathroom door. It's probably not really reusable unless you are mounting the exact same mirror we used.
 
 ## FAQ
 
