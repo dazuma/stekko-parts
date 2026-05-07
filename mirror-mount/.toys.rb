@@ -2,8 +2,8 @@
 
 load File.expand_path("../.toys/.extern/build-generator.rb", context_directory)
 
-expand "build-generator", scad_file: "shade-clips.scad" do |t|
-  t.add_targets("shade-clips", "clip-long", "clip-short", "pillar", "backing")
+expand "build-generator", scad_file: "mirror-mount.scad" do |t|
+  t.add_targets("all-pieces", "nut-mount", "inside-panel", "outside-panel")
   t.string_param(:text, "TEXT_STRING", desc: "String to emboss on the mount")
   t.numeric_param(:text_size, "TEXT_SIZE", desc: "Size for the engraved text")
 end

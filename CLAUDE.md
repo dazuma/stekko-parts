@@ -11,11 +11,11 @@ OpenSCAD source for 3D-printable parts for a 2024 Winnebago Ekko (Ford Transit) 
 Each design lives in its own top-level directory (e.g. `shade-clips/`, `bathroom-fan-mount/`) containing:
 
 - `<name>.scad` — the parametric design source. Tunable parameters at the top, modules below, a final dispatch block at the bottom keyed on a `TARGET` variable.
-- `.toys.rb` — a [Toys](https://dazuma.github.io/toys/) tool defining `toys build` for that design. Lists `ALL_TARGETS` and shells out to `openscad` to export STL.
+- `.toys.rb` — defines [Toys](https://dazuma.github.io/toys/) tool `toys build` that builds STL files for that design. Expands a template defined under `.toys/.extern/build-generator.rb` at the repo root.
 - `README.md` — user-facing description of the part and how to print/use it.
 - One `.stl` file per target — committed build outputs that end users print directly.
 
-The `TARGET` convention is the dispatch mechanism for every design: the `.scad` file branches on `TARGET == "..."` to render either the full layout (for visualization) or one specific printable component (for STL export). Always keep `ALL_TARGETS` in `.toys.rb` in sync with the `TARGET ==` branches in the `.scad` file when adding or renaming components.
+The `TARGET` convention is the dispatch mechanism for every design: the `.scad` file branches on `TARGET == "..."` to render either the full layout (for visualization) or one specific printable component (for STL export). Always keep `add_targets` in `.toys.rb` in sync with the `TARGET ==` branches in the `.scad` file when adding or renaming components.
 
 ## Common commands
 
@@ -23,9 +23,9 @@ Building STLs (run from the design directory, not the repo root):
 
 ```sh
 cd shade-clips
-toys build --all                    # rebuild every STL in this design
-toys build clip-long pillar         # rebuild specific targets
-toys build --all --text "Custom"    # override the engraved text via -D TEXT_STRING
+toys build                    # rebuild every STL in this design
+toys build clip-long pillar   # rebuild specific targets
+toys build --text "Custom"    # override the engraved text via -D TEXT_STRING
 ```
 
 After regenerating STL files, commit them — they are checked in as the printable artifacts users consume.
