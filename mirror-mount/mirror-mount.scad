@@ -14,7 +14,7 @@
 // You can adjust some parameters here.
 
 // Which target to render. Possible values include:
-// "all-pieces", "test-pieces", "nut-mount", "lower-mount",
+// "all-pieces", "test-pieces", "nut-mount", "velcro-mount",
 // "inside-panel", and "outside-panel".
 TARGET = "test-pieces";
 
@@ -25,7 +25,7 @@ MOUNT_WIDTH = 45;
 MOUNT_HEIGHT = 38;
 
 // Thickness of the nut mount piece
-MOUNT_THICKNESS = 8;
+MOUNT_THICKNESS = 8.5;
 
 // Distance from the top of the nut mount piece to the bolt hole
 MOUNT_HOLE_Y = 6;
@@ -37,10 +37,20 @@ MOUNT_WASHER_THICKNESS = 1.0;
 MOUNT_WASHER_RADIUS = 5.0;
 
 // Thickness of the hex nut indentation in the nut mount
-MOUNT_NUT_THICKNESS = 4.0;
+MOUNT_NUT_THICKNESS = 4.2;
 
 // Radius of the hex nut indentation in the nut mount
-MOUNT_NUT_RADIUS = 4.5;
+MOUNT_NUT_RADIUS = 4.8;
+
+VELCRO_MOUNT_WIDTH = 80;
+
+VELCRO_MOUNT_HEIGHT = 40;
+
+VELCRO_MOUNT_THICKNESS = 10;
+
+VELCRO_MOUNT_SCREW_RADIUS = 1.1;
+
+VELCRO_MOUNT_SCREW_SPACING = 50;
 
 // Width of the lower mount bracket
 LOWER_MOUNT_WIDTH = 66;
@@ -52,7 +62,7 @@ LOWER_MOUNT_HEIGHT = 44;
 LOWER_MOUNT_HOLE_Y = 12;
 
 // Thickness of the lower mount bracket
-LOWER_MOUNT_THICKNESS = 9;
+LOWER_MOUNT_THICKNESS = 10;
 
 // Thickness of the base of the lower mount bracket, supporting the nut
 LOWER_MOUNT_BASE_THICKNESS = 3;
@@ -60,7 +70,7 @@ LOWER_MOUNT_BASE_THICKNESS = 3;
 LOWER_MOUNT_CUTOUT_WIDTH = 13;
 
 // Radius of the bolt holes
-BOLT_RADIUS = 2.7;
+BOLT_RADIUS = 2.8;
 
 // Width of the inside panel that fits with the nut mount
 INSIDE_PANEL_WIDTH = 66;
@@ -75,7 +85,7 @@ PANEL_HALF_HEIGHT = 20;
 PANEL_LOWER_HEIGHT = 32;
 
 // Thickness of the inside panels
-INSIDE_PANEL_THICKNESS = 2;
+INSIDE_PANEL_THICKNESS = 3;
 
 // Thickness of the outside panels
 OUTSIDE_PANEL_THICKNESS = 3;
@@ -87,13 +97,13 @@ PANEL_CORNER_RADIUS = 4;
 PEG_SPACING = 25;
 
 // Length of each peg
-PEG_LENGTH = 4;
+PEG_LENGTH = 5;
 
 // Radius of each peg
-PEG_RADIUS = 2.4;
+PEG_RADIUS = 2.5;
 
 // Bevel size of each peg
-PEG_BEVEL = 0.4;
+PEG_BEVEL = 0.5;
 
 // Some text that should be engraved into the outside panel.
 TEXT_STRING = "Stekko Parts";
@@ -159,6 +169,20 @@ module nut_mount() {
   }
 }
 
+module velcro_mount() {
+  translate([VELCRO_MOUNT_WIDTH/2, VELCRO_MOUNT_HEIGHT/2, VELCRO_MOUNT_THICKNESS/2]) {
+    difference() {
+      cube([VELCRO_MOUNT_WIDTH, VELCRO_MOUNT_HEIGHT, VELCRO_MOUNT_THICKNESS], true);
+      translate([VELCRO_MOUNT_SCREW_SPACING/2, 0, 0]) {
+        cylinder(VELCRO_MOUNT_HEIGHT+EPSILON, VELCRO_MOUNT_SCREW_RADIUS, VELCRO_MOUNT_SCREW_RADIUS, true, $fn=CIRCLE_SIDES);
+      }
+      translate([-VELCRO_MOUNT_SCREW_SPACING/2, 0, 0]) {
+        cylinder(VELCRO_MOUNT_HEIGHT+EPSILON, VELCRO_MOUNT_SCREW_RADIUS, VELCRO_MOUNT_SCREW_RADIUS, true, $fn=CIRCLE_SIDES);
+      }
+    }
+  }
+}
+
 module lower_mount() {
   nut_hole_z = LOWER_MOUNT_THICKNESS-LOWER_MOUNT_BASE_THICKNESS-MOUNT_NUT_THICKNESS/2;
   nut_hole_y = LOWER_MOUNT_HEIGHT-LOWER_MOUNT_HOLE_Y;
@@ -201,24 +225,15 @@ module inside_panel() {
       translate([INSIDE_PANEL_WIDTH/2, PANEL_HALF_HEIGHT/2+PANEL_LOWER_HEIGHT/2, INSIDE_PANEL_THICKNESS/2]) {
         cube([INSIDE_PANEL_WIDTH, PANEL_HALF_HEIGHT+PANEL_LOWER_HEIGHT, INSIDE_PANEL_THICKNESS], true);
       }
-      translate([INSIDE_PANEL_WIDTH/2, PANEL_LOWER_HEIGHT-PEG_SPACING/2, INSIDE_PANEL_THICKNESS-EPSILON/2]) {
+      translate([INSIDE_PANEL_WIDTH/2, PANEL_LOWER_HEIGHT-PEG_SPACING/2, INSIDE_PANEL_THICKNESS+PEG_LENGTH/2-EPSILON/2]) {
         translate([0, -PEG_SPACING/2, 0]) {
-          translate([0, 0, PEG_LENGTH/2]) {
-            cylinder(PEG_LENGTH+EPSILON, PEG_RADIUS, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
-          }
-          cylinder(PEG_BEVEL+EPSILON, PEG_RADIUS+PEG_BEVEL+EPSILON, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
+          cylinder(PEG_LENGTH+EPSILON, PEG_RADIUS, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
         }
         translate([-PEG_SPACING/2, 0, 0]) {
-          translate([0, 0, PEG_LENGTH/2]) {
-            cylinder(PEG_LENGTH+EPSILON, PEG_RADIUS, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
-          }
-          cylinder(PEG_BEVEL+EPSILON, PEG_RADIUS+PEG_BEVEL+EPSILON, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
+          cylinder(PEG_LENGTH+EPSILON, PEG_RADIUS, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
         }
         translate([PEG_SPACING/2, 0, 0]) {
-          translate([0, 0, PEG_LENGTH/2]) {
-            cylinder(PEG_LENGTH+EPSILON, PEG_RADIUS, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
-          }
-          cylinder(PEG_BEVEL+EPSILON, PEG_RADIUS+PEG_BEVEL+EPSILON, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
+          cylinder(PEG_LENGTH+EPSILON, PEG_RADIUS, PEG_RADIUS, true, $fn=CIRCLE_SIDES);
         }
       }
     }
@@ -264,31 +279,36 @@ module outside_panel() {
 // Rendering
 
 module test_collection() {
-  outside_panel();
-  translate([0, PANEL_HALF_HEIGHT*2+OBJECT_SPACING, 0]) {
+  nut_mount();
+  translate([MOUNT_WIDTH+OBJECT_SPACING, 0, 0]) {
+    velcro_mount();
+  }
+  translate([0, VELCRO_MOUNT_HEIGHT+OBJECT_SPACING, 0]) {
     inside_panel();
-    translate([0, PANEL_HALF_HEIGHT+PANEL_LOWER_HEIGHT+OBJECT_SPACING, 0]) {
-      nut_mount();
-      translate([MOUNT_WIDTH+OBJECT_SPACING, 0, 0]) {
-        lower_mount();
-      }
+    translate([INSIDE_PANEL_WIDTH+OBJECT_SPACING, 0, 0]) {
+      outside_panel();
     }
   }
 }
 
+// A full set of parts for one job. The rendering has the following constraints:
+// * All parts sit on the xy plane with no overlap
+// * The parts fit within 240x240 in the xy plane
+// * A minimum of OBJECT_SPACING parts from one another
+// * Otherwise, the arrangement is compact, minimizing interior spacing
 module all_collection() {
-  for (i = [0:2]) {
+  for (i = [0:1]) {
     translate([0, i*(PANEL_HALF_HEIGHT*2+OBJECT_SPACING), 0]) outside_panel();
   }
   translate([OUTSIDE_PANEL_WIDTH+OBJECT_SPACING, 0, 0]) {
-    for (i = [0:2]) {
+    for (i = [0:1]) {
       translate([0, i*(PANEL_HALF_HEIGHT+PANEL_LOWER_HEIGHT+OBJECT_SPACING), 0]) inside_panel();
     }
   }
   translate([OUTSIDE_PANEL_WIDTH+INSIDE_PANEL_WIDTH+OBJECT_SPACING*2, 0, 0]) {
-    lower_mount();
-    translate([0, LOWER_MOUNT_HEIGHT+OBJECT_SPACING, 0]) nut_mount();
-    translate([0, LOWER_MOUNT_HEIGHT+MOUNT_HEIGHT+OBJECT_SPACING*2, 0]) nut_mount();
+    velcro_mount();
+    translate([0, VELCRO_MOUNT_HEIGHT+OBJECT_SPACING, 0]) nut_mount();
+    translate([0, VELCRO_MOUNT_HEIGHT+MOUNT_HEIGHT+OBJECT_SPACING*2, 0]) nut_mount();
   }
 }
 
@@ -301,8 +321,8 @@ else if (TARGET == "all-pieces") {
 else if (TARGET == "nut-mount") {
   nut_mount();
 }
-else if (TARGET == "lower-mount") {
-  lower_mount();
+else if (TARGET == "velcro-mount") {
+  velcro_mount();
 }
 else if (TARGET == "inside-panel") {
   inside_panel();
