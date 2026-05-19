@@ -10,6 +10,10 @@ Each part is under a particular directory. Some are generally useful, while othe
 
  *  `shade-clips` - These are clips that can hold a [Vanmade Gear windshield shade](https://vanmadegear.com/products/ekko-windshield-shade) in place without having to use the cab sun visors. On certain model years of the Transit EKKO, they reuse the screws that hold the little velcro "coins" that hold up the useless OEM cab curtain. They are probably usable for most Transit EKKOs if you have the Vanmade or similar windshield shade.
 
+ *  `cubby-bracket` - A small L-bracket we used in our TV-delete cubby. Pretty special-purpose, probably not that reusable.
+
+ *  `shelf-lip` - A lip for shelves in the small pantry behind the dinette seats in a Trekko. If you build a new shelf out of plywood, you can use this lip for it.
+
  *  `mirror-mount` - This is some mounting hardware to better secure a particular mirror to our bathroom door. It's probably not really reusable unless you are mounting the exact same mirror we used.
 
 ## FAQ
